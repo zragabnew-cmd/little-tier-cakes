@@ -1,0 +1,497 @@
+<title>Little Tier Cakes</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Young+Serif&display=swap">
+<style>
+/* Layout: sticky header, split hero with a large drawn cake, filterable grid, product dialog, cart drawer with checkout. */
+:root{
+  --bg:#F8F3F6;
+  --surface:#FFFFFF;
+  --ink:#2B1730;
+  --muted:#6B5870;
+  --line:#E5DAE6;
+  --accent:#B3225A;
+  --accent-ink:#FFFFFF;
+  --pist:#D3E6C3;
+  --butter:#F7E5A6;
+  --ok:#2F7A46;
+  --font-display:"Young Serif","Iowan Old Style",Georgia,serif;
+  --font-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r-sm:8px;--r-md:14px;--r-lg:28px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1B111D;--surface:#291B2C;--ink:#F6EDF5;--muted:#BBA7BF;
+    --line:#403044;--accent:#F2709F;--accent-ink:#2B0A18;--pist:#3A4A33;--butter:#4D4220;--ok:#7CCB92;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1B111D;--surface:#291B2C;--ink:#F6EDF5;--muted:#BBA7BF;--line:#403044;
+  --accent:#F2709F;--accent-ink:#2B0A18;--pist:#3A4A33;--butter:#4D4220;--ok:#7CCB92;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.5;
+  padding-block:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+h1,h2,h3{font-family:var(--font-display);font-weight:400;line-height:1.1;margin:0;text-wrap:balance}
+p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1160px;margin-inline:auto}
+
+/* Header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line);margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px))}
+.top .wrap{display:flex;align-items:center;gap:20px;height:64px}
+.brand{font-family:var(--font-display);font-size:1.4rem;text-decoration:none;color:var(--ink);margin-right:auto;white-space:nowrap}
+.nav{display:flex;gap:22px}
+.nav a{color:var(--muted);text-decoration:none;font-weight:500}
+.nav a:hover{color:var(--ink)}
+.cartbtn{display:flex;align-items:center;gap:10px;border:1.5px solid var(--ink);background:transparent;border-radius:999px;padding:8px 16px;font-weight:600}
+.cartbtn:hover{background:var(--ink);color:var(--bg)}
+.cartbtn .n{background:var(--accent);color:var(--accent-ink);border-radius:999px;min-width:22px;height:22px;display:grid;place-items:center;font-size:.8rem;padding-inline:6px}
+
+/* Hero */
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:32px;align-items:center;padding-block:48px 56px}
+.hero h1{font-size:clamp(2.4rem,5.6vw,4.4rem);letter-spacing:-.01em}
+.hero p.lead{margin-top:18px;max-width:46ch;color:var(--muted);font-size:1.12rem}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:13px 24px;font-weight:700;text-decoration:none;background:var(--accent);color:var(--accent-ink)}
+.btn:hover{filter:brightness(1.07)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:var(--bg)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.stage{background:var(--butter);border-radius:var(--r-lg);padding:20px;aspect-ratio:1/1;display:grid;place-items:center;max-width:100%}
+.stage svg{width:100%;height:100%}
+
+/* Promise strip */
+.promise{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding-block:28px;border-block:1px solid var(--line)}
+.promise h3{font-size:1.15rem;margin-bottom:4px}
+.promise p{color:var(--muted);font-size:.95rem}
+
+/* Shop */
+.shop{padding-block:56px 40px}
+.shophead{display:flex;flex-wrap:wrap;gap:16px;align-items:end;justify-content:space-between;margin-bottom:24px}
+.shophead h2{font-size:clamp(1.8rem,3.4vw,2.6rem)}
+.tools{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 15px;font-weight:600;font-size:.92rem}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.sel{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.card .pic{background:color-mix(in srgb,var(--c) 24%,var(--surface));aspect-ratio:1/.86;display:grid;place-items:center;padding:14px;border:0;width:100%}
+.card .pic svg{width:86%;height:100%;transition:transform .25s}
+.card:hover .pic svg{transform:translateY(-4px)}
+.card .body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
+.card h3{font-size:1.25rem}
+.card .d{color:var(--muted);font-size:.93rem;flex:1}
+.card .row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px}
+.price{font-weight:700;font-variant-numeric:tabular-nums}
+.tag{display:inline-block;font-size:.78rem;font-weight:600;background:var(--pist);padding:2px 9px;border-radius:999px;margin-right:4px}
+.btn.sm{padding:9px 16px;font-size:.92rem}
+.none{padding:40px;text-align:center;color:var(--muted)}
+
+/* How it works */
+.how{padding-block:40px 64px}
+.how h2{font-size:clamp(1.6rem,3vw,2.2rem);margin-bottom:22px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin:0;padding:0;list-style:none;counter-reset:s}
+.steps li{counter-increment:s;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:18px}
+.steps li::before{content:counter(s);display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-weight:700;margin-bottom:10px}
+.steps b{display:block;margin-bottom:2px}
+.steps span{color:var(--muted);font-size:.93rem}
+footer{border-top:1px solid var(--line);padding-block:28px 40px;color:var(--muted);font-size:.92rem;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between}
+
+/* Dialogs */
+dialog{border:0;padding:0;color:var(--ink);background:var(--surface);border-radius:var(--r-lg);max-width:min(880px,calc(100vw - 24px));width:100%;max-height:calc(100dvh - 24px);overflow:auto;box-shadow:0 24px 70px rgba(30,10,35,.35)}
+dialog::backdrop{background:rgba(25,10,30,.55)}
+.x{position:absolute;top:12px;right:12px;width:40px;height:40px;border-radius:50%;border:0;background:var(--bg);font-size:1.3rem;line-height:1;z-index:2}
+.pd{display:grid;grid-template-columns:1fr 1fr;position:relative}
+.pd .art{background:color-mix(in srgb,var(--c) 24%,var(--surface));display:grid;place-items:center;padding:28px;min-height:280px}
+.pd .art svg{width:100%;max-width:340px}
+.pd .info{padding:32px 28px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.pd h2{font-size:1.9rem;padding-right:36px}
+.pd .d{color:var(--muted)}
+fieldset{border:0;padding:0;margin:0;min-width:0}
+legend{font-weight:700;margin-bottom:8px;padding:0}
+.sizes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sizes label{border:1.5px solid var(--line);border-radius:var(--r-sm);padding:10px;cursor:pointer;display:flex;flex-direction:column;gap:2px;text-align:center}
+.sizes input{position:absolute;opacity:0;pointer-events:none}
+.sizes label:has(input:checked){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
+.sizes label:has(input:focus-visible){outline:3px solid var(--accent);outline-offset:2px}
+.sizes b{font-size:1.05rem}
+.sizes small{color:var(--muted)}
+.fld{display:flex;flex-direction:column;gap:6px;min-width:0}
+.fld label{font-weight:600;font-size:.93rem}
+.fld .h{color:var(--muted);font-size:.85rem}
+input[type=text],input[type=tel],input[type=email],input[type=date],select.f,textarea{border:1.5px solid var(--line);background:var(--bg);border-radius:var(--r-sm);padding:10px 12px;width:100%;min-width:0}
+input.bad,textarea.bad{border-color:#C0392B}
+.err{color:#C0392B;font-size:.85rem}
+:root[data-theme="dark"] .err{color:#FF8E80}
+
+/* Cart drawer */
+dialog.drawer{margin:0 0 0 auto;border-radius:var(--r-lg) 0 0 var(--r-lg);max-width:min(460px,100vw);height:100dvh;max-height:100dvh;width:100%}
+.dr{padding:22px 22px 28px;display:flex;flex-direction:column;gap:16px;min-height:100%}
+.dr h2{font-size:1.6rem;padding-right:44px}
+.line{display:grid;grid-template-columns:72px 1fr auto;gap:12px;align-items:center;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.line .th{background:color-mix(in srgb,var(--c) 24%,var(--surface));border-radius:var(--r-sm);aspect-ratio:1;display:grid;place-items:center;padding:6px}
+.line .th svg{width:100%;height:100%}
+.line b{display:block}
+.line small{color:var(--muted);display:block}
+.qty{display:inline-flex;align-items:center;border:1.5px solid var(--line);border-radius:999px;margin-top:6px}
+.qty button{width:30px;height:30px;border:0;background:transparent;font-size:1.1rem;border-radius:50%}
+.qty span{min-width:22px;text-align:center;font-variant-numeric:tabular-nums}
+.rm{border:0;background:transparent;color:var(--muted);text-decoration:underline;font-size:.85rem;padding:0;margin-left:10px}
+.sum{display:flex;flex-direction:column;gap:6px;font-variant-numeric:tabular-nums}
+.sum div{display:flex;justify-content:space-between}
+.sum .tot{font-weight:700;font-size:1.15rem;border-top:1px solid var(--line);padding-top:8px;margin-top:4px}
+.empty{padding:36px 8px;text-align:center;color:var(--muted);display:flex;flex-direction:column;gap:16px;align-items:center}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pay{display:flex;flex-direction:column;gap:8px}
+.pay label{display:flex;gap:10px;align-items:center;border:1.5px solid var(--line);border-radius:var(--r-sm);padding:10px 12px;cursor:pointer}
+.pay label:has(input:checked){border-color:var(--accent)}
+.back{border:0;background:transparent;text-decoration:underline;padding:0;align-self:flex-start;color:var(--muted)}
+.done{text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px;padding-top:24px}
+.done .tick{width:64px;height:64px;border-radius:50%;background:var(--pist);display:grid;place-items:center;color:var(--ok);font-size:2rem}
+.note{background:var(--bg);border-radius:var(--r-sm);padding:10px 12px;font-size:.85rem;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:11px 20px;border-radius:999px;font-weight:600;z-index:60;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr;padding-block:28px 40px}
+  .stage{order:-1;aspect-ratio:1/.78}
+  .nav{display:none}
+  .steps{grid-template-columns:1fr 1fr}
+  .promise{grid-template-columns:1fr;gap:14px}
+  .pd{grid-template-columns:1fr}
+  .pd .art{min-height:0;padding:20px}
+  .pd .art svg{max-width:240px}
+  .pd .info{padding:22px 20px 26px}
+}
+@media (max-width:520px){
+  .steps{grid-template-columns:1fr}
+  .two{grid-template-columns:1fr}
+  dialog.drawer{border-radius:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top">Little Tier Cakes</a>
+    <nav class="nav" aria-label="Main">
+      <a href="#shop">Shop</a>
+      <a href="#how">How it works</a>
+    </nav>
+    <button class="cartbtn" id="openCart" aria-label="Open cart">Cart <span class="n" id="cartCount">0</span></button>
+  </div>
+</header>
+
+<main class="wrap" id="top">
+  <section class="hero">
+    <div>
+      <h1>Cakes baked the morning they arrive.</h1>
+      <p class="lead">Pick a cake, choose a size, write your message. We bake to order and deliver it fresh on the day you choose.</p>
+      <div class="cta">
+        <a class="btn" href="#shop">Shop cakes</a>
+        <a class="btn ghost" href="#how">How ordering works</a>
+      </div>
+    </div>
+    <div class="stage" id="heroCake" aria-hidden="true"></div>
+  </section>
+
+  <section class="promise" aria-label="Our promise">
+    <div><h3>Baked to order</h3><p>Nothing sits in a fridge. Your sponge is baked the morning of delivery.</p></div>
+    <div><h3>Your message, piped by hand</h3><p>Up to 30 characters of icing lettering on any cake, at no extra cost.</p></div>
+    <div><h3>Order by 2 pm</h3><p>Order before 2 pm for next-day delivery. Free delivery on orders over $60.</p></div>
+  </section>
+
+  <section class="shop" id="shop">
+    <div class="shophead">
+      <h2>The cake counter</h2>
+      <div class="tools">
+        <div class="chips" id="chips" role="group" aria-label="Filter by type"></div>
+        <label class="visually-hidden" for="sort" style="position:absolute;left:-9999px">Sort cakes</label>
+        <select class="sel" id="sort">
+          <option value="feat">Featured</option>
+          <option value="lo">Price: low to high</option>
+          <option value="hi">Price: high to low</option>
+          <option value="az">Name A to Z</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section class="how" id="how">
+    <h2>How ordering works</h2>
+    <ol class="steps">
+      <li><b>Choose a cake</b><span>Pick a flavour and a size that fits your guest list.</span></li>
+      <li><b>Add your message</b><span>Tell us what to write on top, or leave it plain.</span></li>
+      <li><b>Pick a delivery slot</b><span>Choose the day and a two-hour window at checkout.</span></li>
+      <li><b>We bake and deliver</b><span>Your cake travels in a chilled box and arrives ready to serve.</span></li>
+    </ol>
+  </section>
+
+  <footer>
+    <span>Little Tier Cakes. Made in small batches.</span>
+    <span>Allergens: all cakes are made in a kitchen that handles nuts, eggs, milk, gluten and sesame.</span>
+  </footer>
+</main>
+
+<dialog id="prodDlg" aria-labelledby="pdName"></dialog>
+<dialog id="cartDlg" class="drawer" aria-labelledby="cartTitle"></dialog>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+(function(){
+  "use strict";
+  var SIZES=[{k:'6"',serves:'6 to 8',m:1},{k:'8"',serves:'10 to 14',m:1.6},{k:'10"',serves:'16 to 22',m:2.3}];
+  var CATS=['All','Birthday','Chocolate','Fruit','Cheesecake','Vegan'];
+  var FREE_OVER=60, FEE=6;
+  var P=[
+   {id:'ganache',name:'Dark Chocolate Ganache',cat:['Chocolate'],price:38,c:'#6B3A2A',layers:['#4A2418','#5C3022','#4A2418'],f:'#3A1A12',top:'shards',drip:'#2A1009',desc:'Cocoa sponge in three layers with whipped dark ganache between each and a glossy ganache top.',notes:'70% dark chocolate, cocoa sponge, espresso syrup'},
+   {id:'strawberry',name:'Strawberry Cream',cat:['Fruit','Birthday'],price:36,c:'#E8788A',layers:['#F8DCE0','#FCEBEC','#F8DCE0'],f:'#FFF6F4',top:'strawberries',desc:'Vanilla sponge, fresh strawberry compote and light whipped cream, topped with whole berries.',notes:'Vanilla sponge, strawberries, whipped cream'},
+   {id:'funfetti',name:'Vanilla Funfetti',cat:['Birthday'],price:34,c:'#F2B84B',layers:['#FFF1C9','#F9D3E4','#CDE6F7'],f:'#FFFFFF',top:'sprinkles',candle:true,desc:'Soft vanilla bean sponge with rainbow sprinkles baked in, vanilla buttercream and a candle on top.',notes:'Vanilla bean, buttercream, sprinkles'},
+   {id:'lemon',name:'Lemon Blueberry',cat:['Fruit'],price:35,c:'#E9CF4A',layers:['#FFF3B8','#FFEA8A','#FFF3B8'],f:'#FFFDF0',top:'berries',drip:'#FBE16A',desc:'Lemon sponge, blueberry jam and lemon curd under a cloud of cream cheese frosting.',notes:'Lemon curd, blueberry jam, cream cheese frosting'},
+   {id:'redvelvet',name:'Red Velvet',cat:['Birthday'],price:37,c:'#B62A3A',layers:['#A3202F','#B62A3A','#A3202F'],f:'#FFF8F2',top:'crumbs',desc:'Buttermilk red velvet sponge with tangy cream cheese frosting and a rim of red crumbs.',notes:'Buttermilk sponge, cream cheese frosting'},
+   {id:'pistachio',name:'Pistachio Rose',cat:['Birthday'],price:42,c:'#9CC47E',layers:['#BFD8A4','#D5E6BF','#BFD8A4'],f:'#F6D8E0',top:'pistachio',desc:'Pistachio sponge, rose-scented cream and crushed pistachios with dried rose petals.',notes:'Pistachio, rose water, cream'},
+   {id:'basque',name:'Burnt Basque Cheesecake',cat:['Cheesecake'],price:32,c:'#C9873B',layers:['#C9873B','#F2D9A4'],f:'#7A4420',top:'none',flat:true,desc:'Creamy centre under a deeply caramelised top. No base, no fuss, served at room temperature.',notes:'Cream cheese, cream, eggs'},
+   {id:'swirl',name:'Strawberry Swirl Cheesecake',cat:['Cheesecake','Fruit'],price:36,c:'#F2A9B8',layers:['#F6D1D8','#F9E6C8'],f:'#F2A9B8',top:'strawberries',flat:true,desc:'Baked vanilla cheesecake on a biscuit base with a ribbon of strawberry through the middle.',notes:'Cream cheese, strawberry, biscuit base'},
+   {id:'carrot',name:'Vegan Carrot Walnut',cat:['Vegan'],price:36,c:'#C97B3A',layers:['#C97B3A','#D68E4D','#C97B3A'],f:'#FFF6E8',top:'walnuts',desc:'Spiced carrot sponge made without eggs or dairy, with a coconut cream frosting.',notes:'Carrot, walnut, cinnamon, coconut cream'},
+   {id:'veganrasp',name:'Vegan Raspberry Chocolate',cat:['Vegan','Chocolate','Fruit'],price:40,c:'#8E2B4A',layers:['#4A2418','#7A2B45','#4A2418'],f:'#5C2A3A',top:'berries2',desc:'Rich chocolate sponge layered with raspberry cream, made with no eggs or dairy.',notes:'Dark chocolate, raspberry, oat cream'},
+   {id:'tiramisu',name:'Tiramisu Cake',cat:['Birthday'],price:39,c:'#B88B5E',layers:['#E7D3B5','#F3E7D2','#E7D3B5'],f:'#6B4A35',top:'cocoa',desc:'Coffee-soaked sponge with mascarpone cream and a thick dusting of cocoa.',notes:'Espresso, mascarpone, cocoa'},
+   {id:'caramel',name:'Salted Caramel Crunch',cat:['Birthday'],price:38,c:'#E0A04F',layers:['#E6B06B','#F0C98D','#E6B06B'],f:'#F7E3C0',top:'caramel',drip:'#B8741F',desc:'Brown sugar sponge, salted caramel buttercream, caramel drip and crunchy toffee pieces.',notes:'Brown sugar, salted caramel, toffee'}
+  ];
+  var BYID={};P.forEach(function(p){BYID[p.id]=p});
+
+  function $(s,r){return (r||document).querySelector(s)}
+  function money(n){return '$'+(Math.round(n*100)/100).toFixed(2).replace(/\.00$/,'')}
+  function priceFor(p,sk){var s=SIZES.filter(function(z){return z.k===sk})[0]||SIZES[0];return Math.round(p.price*s.m)}
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+
+  /* ---------- Cake drawing ---------- */
+  function cakeSVG(p,big){
+    var L=p.layers,n=L.length,h=p.flat?30:24,gap=4,w=124,x=38,total=n*h+(n-1)*gap,bot=164,top=bot-total;
+    var s='<svg viewBox="0 0 200 190" role="img" aria-label="'+esc(p.name)+'" xmlns="http://www.w3.org/2000/svg">';
+    s+='<ellipse cx="100" cy="170" rx="86" ry="11" fill="#2B1730" opacity=".16"/>';
+    s+='<ellipse cx="100" cy="166" rx="84" ry="9" fill="#FFFFFF"/><ellipse cx="100" cy="166" rx="84" ry="9" fill="none" stroke="#2B1730" stroke-opacity=".15"/>';
+    for(var i=0;i<n;i++){
+      var y=top+i*(h+gap);
+      s+='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+(i===n-1?6:3)+'" fill="'+L[i]+'"/>';
+      if(i<n-1) s+='<rect x="'+(x-2)+'" y="'+(y+h-1)+'" width="'+(w+4)+'" height="'+(gap+2)+'" rx="2" fill="'+p.f+'"/>';
+    }
+    var ty=top-9;
+    if(p.id==='basque'){
+      s+='<path d="M'+(x-2)+' '+(top+8)+' Q100 '+(top-14)+' '+(x+w+2)+' '+(top+8)+' L'+(x+w+2)+' '+(top+2)+' Q100 '+(top-22)+' '+(x-2)+' '+(top+2)+'Z" fill="#7A4420"/>';
+      s+='<path d="M60 '+(top-6)+' Q75 '+(top-14)+' 92 '+(top-8)+' Q110 '+(top-2)+' 138 '+(top-9)+'" stroke="#4E2A10" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/>';
+    } else {
+      s+='<rect x="'+(x-3)+'" y="'+ty+'" width="'+(w+6)+'" height="16" rx="8" fill="'+p.f+'"/>';
+      if(p.drip){
+        var dx=[48,64,82,100,118,134,150],dh=[16,26,12,30,18,28,14];
+        for(var d=0;d<dx.length;d++) s+='<rect x="'+(dx[d]-4)+'" y="'+(ty+8)+'" width="9" height="'+dh[d]+'" rx="4.5" fill="'+p.drip+'"/>';
+        s+='<rect x="'+(x-3)+'" y="'+ty+'" width="'+(w+6)+'" height="12" rx="6" fill="'+p.drip+'"/>';
+      }
+    }
+    var ty2=ty+(p.id==='basque'?10:2);
+    switch(p.top){
+      case 'strawberries':
+        [[66,ty2],[100,ty2-3],[134,ty2]].forEach(function(q){
+          s+='<path d="M'+(q[0]-9)+' '+(q[1]-6)+' Q'+q[0]+' '+(q[1]+16)+' '+(q[0]+9)+' '+(q[1]-6)+' Q'+q[0]+' '+(q[1]-14)+' '+(q[0]-9)+' '+(q[1]-6)+'Z" fill="#D6264F"/>';
+          s+='<path d="M'+(q[0]-6)+' '+(q[1]-11)+' L'+q[0]+' '+(q[1]-17)+' L'+(q[0]+6)+' '+(q[1]-11)+' L'+q[0]+' '+(q[1]-9)+'Z" fill="#3E8F4B"/>';
+        });break;
+      case 'berries':
+        [[62,0,'#4B4FA8'],[78,-4,'#5A5FB8'],[96,-1,'#4B4FA8'],[114,-5,'#5A5FB8'],[132,0,'#4B4FA8'],[88,-10,'#5A5FB8'],[122,-11,'#4B4FA8']].forEach(function(q){s+='<circle cx="'+q[0]+'" cy="'+(ty2+q[1]-2)+'" r="7" fill="'+q[2]+'"/><circle cx="'+(q[0]-2)+'" cy="'+(ty2+q[1]-4)+'" r="2" fill="#fff" opacity=".35"/>'});break;
+      case 'berries2':
+        [[64,0],[82,-5],[102,-1],[120,-6],[138,0],[92,-12]].forEach(function(q){s+='<circle cx="'+q[0]+'" cy="'+(ty2+q[1]-2)+'" r="7" fill="#D6264F"/><circle cx="'+(q[0]-2)+'" cy="'+(ty2+q[1]-4)+'" r="2" fill="#fff" opacity=".4"/>'});break;
+      case 'sprinkles':
+        var cs=['#F25C78','#FFC93C','#3DB5E6','#6FCF7F','#B07CE8'];
+        for(var k=0;k<18;k++){var sx=48+(k*37)%104,sy=ty+3+(k*11)%9;s+='<rect x="'+sx+'" y="'+sy+'" width="8" height="3" rx="1.5" fill="'+cs[k%5]+'" transform="rotate('+((k*47)%180)+' '+(sx+4)+' '+(sy+1.5)+')"/>'}
+        if(p.candle){s+='<rect x="97" y="'+(ty-20)+'" width="6" height="22" rx="2" fill="#F25C78"/><rect x="97" y="'+(ty-14)+'" width="6" height="4" fill="#fff" opacity=".7"/><path d="M100 '+(ty-36)+' Q107 '+(ty-27)+' 100 '+(ty-22)+' Q93 '+(ty-27)+' 100 '+(ty-36)+'Z" fill="#FFB020"/>'}
+        break;
+      case 'shards':
+        [[58,-14,18],[80,-18,22],[104,-16,20],[126,-14,18]].forEach(function(q,i){s+='<path d="M'+q[0]+' '+(ty+2)+' L'+(q[0]+6)+' '+(ty+q[1])+' L'+(q[0]+q[2])+' '+(ty+2)+'Z" fill="'+(i%2?'#2A1009':'#4A2418')+'"/>'});break;
+      case 'crumbs':
+        for(var m=0;m<16;m++){s+='<circle cx="'+(46+(m*41)%108)+'" cy="'+(ty+3+(m*7)%8)+'" r="'+(2+(m%3))+'" fill="#A3202F"/>'}break;
+      case 'pistachio':
+        for(var q2=0;q2<16;q2++){s+='<circle cx="'+(48+(q2*43)%104)+'" cy="'+(ty+4+(q2*5)%8)+'" r="'+(2+(q2%2))+'" fill="'+(q2%3?'#6E9B4A':'#8DBA67')+'"/>'}
+        [[78,ty-2],[112,ty-3]].forEach(function(r){s+='<circle cx="'+r[0]+'" cy="'+r[1]+'" r="8" fill="#E88AA6"/><circle cx="'+r[0]+'" cy="'+r[1]+'" r="4" fill="#F4B4C6"/>'});break;
+      case 'walnuts':
+        [[68,0],[100,-3],[132,0]].forEach(function(q){s+='<ellipse cx="'+q[0]+'" cy="'+(ty+q[1])+'" rx="10" ry="7" fill="#8A5A36"/><path d="M'+(q[0]-6)+' '+(ty+q[1])+' Q'+q[0]+' '+(ty+q[1]-6)+' '+(q[0]+6)+' '+(ty+q[1])+'" stroke="#5E3A20" stroke-width="1.6" fill="none"/>'});break;
+      case 'caramel':
+        [[64,0],[84,-4],[104,-1],[124,-5],[142,0]].forEach(function(q){s+='<rect x="'+(q[0]-7)+'" y="'+(ty+q[1]-7)+'" width="14" height="12" rx="3" fill="#C98A33"/><circle cx="'+(q[0]-2)+'" cy="'+(ty+q[1]-3)+'" r="1.4" fill="#fff"/>'});break;
+      case 'cocoa':
+        for(var c2=0;c2<24;c2++){s+='<circle cx="'+(46+(c2*29)%108)+'" cy="'+(ty+3+(c2*13)%10)+'" r="1.6" fill="#3A2418" opacity=".7"/>'}break;
+    }
+    return s+'</svg>';
+  }
+
+  /* ---------- State ---------- */
+  var cart=[],cat='All',sort='feat';
+  try{var raw=localStorage.getItem('lt-cart');if(raw){var a=JSON.parse(raw);if(Array.isArray(a))cart=a.filter(function(i){return BYID[i.id]&&i.qty>0})}}catch(e){}
+  function save(){try{localStorage.setItem('lt-cart',JSON.stringify(cart))}catch(e){}}
+  function count(){return cart.reduce(function(a,i){return a+i.qty},0)}
+  function subtotal(){return cart.reduce(function(a,i){return a+priceFor(BYID[i.id],i.size)*i.qty},0)}
+  function delivery(){return subtotal()>=FREE_OVER||!cart.length?0:FEE}
+
+  var toastT;
+  function toast(t){var el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toastT);toastT=setTimeout(function(){el.hidden=true},2200)}
+  function updateCount(){$('#cartCount').textContent=count()}
+
+  /* ---------- Shop grid ---------- */
+  function renderChips(){
+    $('#chips').innerHTML=CATS.map(function(c){return '<button class="chip" type="button" data-cat="'+c+'" aria-pressed="'+(c===cat)+'">'+c+'</button>'}).join('');
+  }
+  function renderGrid(){
+    var list=P.filter(function(p){return cat==='All'||p.cat.indexOf(cat)>-1});
+    if(sort==='lo')list.sort(function(a,b){return a.price-b.price});
+    if(sort==='hi')list.sort(function(a,b){return b.price-a.price});
+    if(sort==='az')list.sort(function(a,b){return a.name.localeCompare(b.name)});
+    $('#grid').innerHTML=list.length?list.map(function(p){
+      return '<article class="card" style="--c:'+p.c+'">'+
+        '<button class="pic" type="button" data-open="'+p.id+'" aria-label="View '+esc(p.name)+'">'+cakeSVG(p)+'</button>'+
+        '<div class="body"><div>'+p.cat.map(function(c){return '<span class="tag">'+c+'</span>'}).join('')+'</div>'+
+        '<h3>'+esc(p.name)+'</h3><p class="d">'+esc(p.desc)+'</p>'+
+        '<div class="row"><span class="price">From '+money(p.price)+'</span><button class="btn sm" type="button" data-open="'+p.id+'">Choose size</button></div></div></article>';
+    }).join(''):'<p class="none">No cakes match this filter yet. Try another type.</p>';
+  }
+
+  /* ---------- Product dialog ---------- */
+  var cur=null;
+  function openProduct(id){
+    var p=BYID[id];cur={p:p,size:SIZES[0].k};
+    var dlg=$('#prodDlg');
+    dlg.innerHTML='<div class="pd" style="--c:'+p.c+'"><button class="x" type="button" data-close aria-label="Close">&times;</button>'+
+      '<div class="art">'+cakeSVG(p,true)+'</div>'+
+      '<form class="info" id="pForm" novalidate>'+
+        '<div><h2 id="pdName">'+esc(p.name)+'</h2></div>'+
+        '<p class="d">'+esc(p.desc)+'</p>'+
+        '<p class="d"><b style="color:var(--ink)">Inside:</b> '+esc(p.notes)+'</p>'+
+        '<fieldset><legend>Size</legend><div class="sizes">'+SIZES.map(function(z,i){
+          return '<label><input type="radio" name="size" value="'+z.k+'"'+(i===0?' checked':'')+'><b>'+z.k+' &middot; <span data-sp="'+z.k+'">'+money(priceFor(p,z.k))+'</span></b><small>Serves '+z.serves+'</small></label>';
+        }).join('')+'</div></fieldset>'+
+        '<div class="fld"><label for="pMsg">Message on the cake <span style="font-weight:400;color:var(--muted)">(optional)</span></label>'+
+          '<input type="text" id="pMsg" maxlength="30" placeholder="Happy birthday Sara"><span class="h" id="pCnt">0 of 30 characters</span></div>'+
+        '<button class="btn" type="submit" id="pAdd">Add to cart for <span id="pPrice">'+money(priceFor(p,SIZES[0].k))+'</span></button>'+
+      '</form></div>';
+    dlg.showModal();
+  }
+  document.addEventListener('change',function(e){
+    if(e.target.name==='size'&&cur){cur.size=e.target.value;$('#pPrice').textContent=money(priceFor(cur.p,cur.size))}
+  });
+  document.addEventListener('input',function(e){
+    if(e.target.id==='pMsg')$('#pCnt').textContent=e.target.value.length+' of 30 characters';
+  });
+  document.addEventListener('submit',function(e){
+    if(e.target.id==='pForm'){
+      e.preventDefault();
+      var msg=$('#pMsg').value.trim();
+      var ex=cart.filter(function(i){return i.id===cur.p.id&&i.size===cur.size&&i.msg===msg})[0];
+      if(ex)ex.qty++;else cart.push({id:cur.p.id,size:cur.size,msg:msg,qty:1});
+      save();updateCount();$('#prodDlg').close();toast('Added to cart');
+    }
+  });
+
+  /* ---------- Cart drawer ---------- */
+  var view='cart',order=null,errs={};
+  function openCart(v){view=v||'cart';renderCart();var d=$('#cartDlg');if(!d.open)d.showModal()}
+  function lineHTML(i,idx){
+    var p=BYID[i.id];
+    return '<div class="line" style="--c:'+p.c+'"><div class="th">'+cakeSVG(p)+'</div><div><b>'+esc(p.name)+'</b><small>'+i.size+' cake'+(i.msg?', "'+esc(i.msg)+'"':'')+'</small>'+
+      '<div><span class="qty"><button type="button" data-dec="'+idx+'" aria-label="Decrease quantity">&minus;</button><span aria-live="polite">'+i.qty+'</span><button type="button" data-inc="'+idx+'" aria-label="Increase quantity">+</button></span>'+
+      '<button class="rm" type="button" data-rm="'+idx+'">Remove</button></div></div>'+
+      '<span class="price">'+money(priceFor(p,i.size)*i.qty)+'</span></div>';
+  }
+  function summaryHTML(){
+    var d=delivery(),s=subtotal();
+    return '<div class="sum"><div><span>Subtotal</span><span>'+money(s)+'</span></div>'+
+      '<div><span>Delivery</span><span>'+(d?money(d):'Free')+'</span></div>'+
+      (d?'<div style="color:var(--muted);font-size:.88rem"><span>Add '+money(FREE_OVER-s)+' more for free delivery</span><span></span></div>':'')+
+      '<div class="tot"><span>Total</span><span>'+money(s+d)+'</span></div></div>';
+  }
+  function tomorrow(){var t=new Date();t.setDate(t.getDate()+1);var m=String(t.getMonth()+1).padStart(2,'0'),d=String(t.getDate()).padStart(2,'0');return t.getFullYear()+'-'+m+'-'+d}
+  function renderCart(){
+    var dlg=$('#cartDlg'),h='<div class="dr"><button class="x" type="button" data-close aria-label="Close cart">&times;</button>';
+    if(view==='done'&&order){
+      h+='<div class="done"><div class="tick" aria-hidden="true">&#10003;</div><h2 id="cartTitle" style="padding:0">Order placed</h2>'+
+        '<p>Thanks, '+esc(order.name)+'. Your order number is <b>'+order.no+'</b>.</p>'+
+        '<p style="color:var(--muted)">We will bake on '+esc(order.when)+' and deliver between '+esc(order.slot)+' to '+esc(order.addr)+'.</p>'+
+        '<p><b>Total '+money(order.total)+'</b>, paid '+esc(order.pay)+'.</p>'+
+        '<p class="note">This is a demo shop. No payment was taken and no order was sent to a bakery.</p>'+
+        '<button class="btn" type="button" data-close>Keep browsing</button></div></div>';
+      dlg.innerHTML=h;return;
+    }
+    if(!cart.length){
+      h+='<h2 id="cartTitle">Your cart</h2><div class="empty"><p>Your cart is empty. Pick a cake and it will show up here.</p><button class="btn" type="button" data-close>Browse cakes</button></div></div>';
+      dlg.innerHTML=h;return;
+    }
+    if(view==='cart'){
+      h+='<h2 id="cartTitle">Your cart</h2>'+cart.map(lineHTML).join('')+summaryHTML()+
+        '<button class="btn" type="button" id="toCheckout">Go to checkout</button></div>';
+    } else {
+      h+='<button class="back" type="button" id="backCart">Back to cart</button><h2 id="cartTitle">Delivery details</h2>'+
+        '<form id="coForm" novalidate style="display:flex;flex-direction:column;gap:14px">'+
+        fld('name','Full name','text','name')+
+        '<div class="two">'+fld('phone','Phone','tel','tel')+fld('email','Email','email','email')+'</div>'+
+        '<div class="fld"><label for="addr">Delivery address</label><textarea id="addr" name="addr" rows="2" autocomplete="street-address" placeholder="Street, building, apartment, area"></textarea><span class="err" id="e-addr"></span></div>'+
+        '<div class="two"><div class="fld"><label for="date">Delivery date</label><input type="date" id="date" name="date" min="'+tomorrow()+'" value="'+tomorrow()+'"><span class="err" id="e-date"></span></div>'+
+        '<div class="fld"><label for="slot">Time window</label><select class="f" id="slot" name="slot"><option>10:00 to 12:00</option><option>12:00 to 14:00</option><option selected>14:00 to 16:00</option><option>16:00 to 18:00</option></select></div></div>'+
+        '<fieldset class="pay"><legend>Payment</legend><label><input type="radio" name="pay" value="in cash on delivery" checked> Cash on delivery</label><label><input type="radio" name="pay" value="by card on delivery"> Card on delivery</label></fieldset>'+
+        '<div class="fld"><label for="note">Note for the baker <span style="font-weight:400;color:var(--muted)">(optional)</span></label><input type="text" id="note" name="note" placeholder="Gate code, allergies, anything we should know"></div>'+
+        cart.map(function(i){return '<div style="display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:.92rem"><span>'+i.qty+' &times; '+esc(BYID[i.id].name)+', '+i.size+'</span><span>'+money(priceFor(BYID[i.id],i.size)*i.qty)+'</span></div>'}).join('')+
+        summaryHTML()+
+        '<button class="btn" type="submit">Place order</button></form></div>';
+    }
+    dlg.innerHTML=h;
+  }
+  function fld(id,label,type,ac){return '<div class="fld"><label for="'+id+'">'+label+'</label><input type="'+type+'" id="'+id+'" name="'+id+'" autocomplete="'+ac+'"><span class="err" id="e-'+id+'"></span></div>'}
+
+  document.addEventListener('submit',function(e){
+    if(e.target.id!=='coForm')return;
+    e.preventDefault();
+    var f=e.target,v=function(n){return f.elements[n].value.trim()},bad=false;
+    function chk(n,ok,msg){var el=$('#e-'+n),inp=f.elements[n];el.textContent=ok?'':msg;inp.classList.toggle('bad',!ok);if(!ok&&!bad){inp.focus();bad=true}}
+    chk('name',v('name').length>1,'Enter your full name.');
+    chk('phone',/^[+\d][\d\s\-()]{6,}$/.test(v('phone')),'Enter a phone number we can call, like 555 0123.');
+    chk('email',/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v('email')),'Enter an email like name@example.com.');
+    chk('addr',v('addr').length>9,'Enter the full street address, including building and area.');
+    chk('date',v('date')>=tomorrow(),'Choose tomorrow or a later date.');
+    if(bad)return;
+    var total=subtotal()+delivery();
+    order={no:'LT-'+String(Math.floor(Math.random()*90000)+10000),name:v('name').split(' ')[0],addr:v('addr'),slot:v('slot'),pay:f.elements.pay.value,
+      when:new Date(v('date')+'T12:00:00').toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'}),total:total};
+    cart=[];save();updateCount();view='done';renderCart();
+  });
+
+  /* ---------- Events ---------- */
+  document.addEventListener('click',function(e){
+    var t=e.target.closest('button,a');if(!t)return;
+    if(t.dataset.cat){cat=t.dataset.cat;renderChips();renderGrid();return}
+    if(t.dataset.open){openProduct(t.dataset.open);return}
+    if(t.hasAttribute('data-close')){var dlg=t.closest('dialog');if(dlg)dlg.close();return}
+    if(t.id==='openCart'){openCart('cart');return}
+    if(t.id==='toCheckout'){view='checkout';renderCart();return}
+    if(t.id==='backCart'){view='cart';renderCart();return}
+    var k;
+    if((k=t.dataset.inc)!==undefined){cart[k].qty=Math.min(20,cart[k].qty+1)}
+    else if((k=t.dataset.dec)!==undefined){cart[k].qty--;if(cart[k].qty<1)cart.splice(k,1)}
+    else if((k=t.dataset.rm)!==undefined){cart.splice(k,1)}
+    else return;
+    save();updateCount();renderCart();
+  });
+  document.addEventListener('click',function(e){
+    if(e.target.tagName==='DIALOG'){var r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close()}
+  });
+  $('#sort').addEventListener('change',function(e){sort=e.target.value;renderGrid()});
+
+  /* ---------- Init ---------- */
+  $('#heroCake').innerHTML=cakeSVG({id:'hero',name:'Pistachio Rose cake',layers:['#BFD8A4','#F6D8E0','#BFD8A4'],f:'#FFFFFF',top:'strawberries',drip:'#F2A9B8'},true);
+  renderChips();renderGrid();updateCount();
+})();
+</script>
