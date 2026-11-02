@@ -1,0 +1,226 @@
+[
+  {
+    "id": "ganache",
+    "name": "Dark Chocolate Ganache",
+    "cat": [
+      "Chocolate"
+    ],
+    "price": 38,
+    "c": "#6B3A2A",
+    "layers": [
+      "#4A2418",
+      "#5C3022",
+      "#4A2418"
+    ],
+    "f": "#3A1A12",
+    "top": "shards",
+    "drip": "#2A1009",
+    "desc": "Cocoa sponge in three layers with whipped dark ganache between each and a glossy ganache top.",
+    "notes": "70% dark chocolate, cocoa sponge, espresso syrup"
+  },
+  {
+    "id": "strawberry",
+    "name": "Strawberry Cream",
+    "cat": [
+      "Fruit",
+      "Birthday"
+    ],
+    "price": 36,
+    "c": "#E8788A",
+    "layers": [
+      "#F8DCE0",
+      "#FCEBEC",
+      "#F8DCE0"
+    ],
+    "f": "#FFF6F4",
+    "top": "strawberries",
+    "desc": "Vanilla sponge, fresh strawberry compote and light whipped cream, topped with whole berries.",
+    "notes": "Vanilla sponge, strawberries, whipped cream"
+  },
+  {
+    "id": "funfetti",
+    "name": "Vanilla Funfetti",
+    "cat": [
+      "Birthday"
+    ],
+    "price": 34,
+    "c": "#F2B84B",
+    "layers": [
+      "#FFF1C9",
+      "#F9D3E4",
+      "#CDE6F7"
+    ],
+    "f": "#FFFFFF",
+    "top": "sprinkles",
+    "candle": true,
+    "desc": "Soft vanilla bean sponge with rainbow sprinkles baked in, vanilla buttercream and a candle on top.",
+    "notes": "Vanilla bean, buttercream, sprinkles"
+  },
+  {
+    "id": "lemon",
+    "name": "Lemon Blueberry",
+    "cat": [
+      "Fruit"
+    ],
+    "price": 35,
+    "c": "#E9CF4A",
+    "layers": [
+      "#FFF3B8",
+      "#FFEA8A",
+      "#FFF3B8"
+    ],
+    "f": "#FFFDF0",
+    "top": "berries",
+    "drip": "#FBE16A",
+    "desc": "Lemon sponge, blueberry jam and lemon curd under a cloud of cream cheese frosting.",
+    "notes": "Lemon curd, blueberry jam, cream cheese frosting"
+  },
+  {
+    "id": "redvelvet",
+    "name": "Red Velvet",
+    "cat": [
+      "Birthday"
+    ],
+    "price": 37,
+    "c": "#B62A3A",
+    "layers": [
+      "#A3202F",
+      "#B62A3A",
+      "#A3202F"
+    ],
+    "f": "#FFF8F2",
+    "top": "crumbs",
+    "desc": "Buttermilk red velvet sponge with tangy cream cheese frosting and a rim of red crumbs.",
+    "notes": "Buttermilk sponge, cream cheese frosting"
+  },
+  {
+    "id": "pistachio",
+    "name": "Pistachio Rose",
+    "cat": [
+      "Birthday"
+    ],
+    "price": 42,
+    "c": "#9CC47E",
+    "layers": [
+      "#BFD8A4",
+      "#D5E6BF",
+      "#BFD8A4"
+    ],
+    "f": "#F6D8E0",
+    "top": "pistachio",
+    "desc": "Pistachio sponge, rose-scented cream and crushed pistachios with dried rose petals.",
+    "notes": "Pistachio, rose water, cream"
+  },
+  {
+    "id": "basque",
+    "name": "Burnt Basque Cheesecake",
+    "cat": [
+      "Cheesecake"
+    ],
+    "price": 32,
+    "c": "#C9873B",
+    "layers": [
+      "#C9873B",
+      "#F2D9A4"
+    ],
+    "f": "#7A4420",
+    "top": "none",
+    "flat": true,
+    "desc": "Creamy centre under a deeply caramelised top. No base, no fuss, served at room temperature.",
+    "notes": "Cream cheese, cream, eggs"
+  },
+  {
+    "id": "swirl",
+    "name": "Strawberry Swirl Cheesecake",
+    "cat": [
+      "Cheesecake",
+      "Fruit"
+    ],
+    "price": 36,
+    "c": "#F2A9B8",
+    "layers": [
+      "#F6D1D8",
+      "#F9E6C8"
+    ],
+    "f": "#F2A9B8",
+    "top": "strawberries",
+    "flat": true,
+    "desc": "Baked vanilla cheesecake on a biscuit base with a ribbon of strawberry through the middle.",
+    "notes": "Cream cheese, strawberry, biscuit base"
+  },
+  {
+    "id": "carrot",
+    "name": "Vegan Carrot Walnut",
+    "cat": [
+      "Vegan"
+    ],
+    "price": 36,
+    "c": "#C97B3A",
+    "layers": [
+      "#C97B3A",
+      "#D68E4D",
+      "#C97B3A"
+    ],
+    "f": "#FFF6E8",
+    "top": "walnuts",
+    "desc": "Spiced carrot sponge made without eggs or dairy, with a coconut cream frosting.",
+    "notes": "Carrot, walnut, cinnamon, coconut cream"
+  },
+  {
+    "id": "veganrasp",
+    "name": "Vegan Raspberry Chocolate",
+    "cat": [
+      "Vegan",
+      "Chocolate",
+      "Fruit"
+    ],
+    "price": 40,
+    "c": "#8E2B4A",
+    "layers": [
+      "#4A2418",
+      "#7A2B45",
+      "#4A2418"
+    ],
+    "f": "#5C2A3A",
+    "top": "berries2",
+    "desc": "Rich chocolate sponge layered with raspberry cream, made with no eggs or dairy.",
+    "notes": "Dark chocolate, raspberry, oat cream"
+  },
+  {
+    "id": "tiramisu",
+    "name": "Tiramisu Cake",
+    "cat": [
+      "Birthday"
+    ],
+    "price": 39,
+    "c": "#B88B5E",
+    "layers": [
+      "#E7D3B5",
+      "#F3E7D2",
+      "#E7D3B5"
+    ],
+    "f": "#6B4A35",
+    "top": "cocoa",
+    "desc": "Coffee-soaked sponge with mascarpone cream and a thick dusting of cocoa.",
+    "notes": "Espresso, mascarpone, cocoa"
+  },
+  {
+    "id": "caramel",
+    "name": "Salted Caramel Crunch",
+    "cat": [
+      "Birthday"
+    ],
+    "price": 38,
+    "c": "#E0A04F",
+    "layers": [
+      "#E6B06B",
+      "#F0C98D",
+      "#E6B06B"
+    ],
+    "f": "#F7E3C0",
+    "top": "caramel",
+    "drip": "#B8741F",
+    "desc": "Brown sugar sponge, salted caramel buttercream, caramel drip and crunchy toffee pieces.",
+    "notes": "Brown sugar, salted caramel, toffee"
+  }
+]
