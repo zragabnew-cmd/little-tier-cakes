@@ -35,3 +35,9 @@ Endpoints (all under `/api`):
 | Test helpers | `POST /test/reset`, `POST /test/orders/:id/status` (disabled when `NODE_ENV=production`) |
 
 Errors return `{ "error": { "code", "message", "fields" } }` with status 400, 401, 403, 404, 409 or 422.
+
+## Deploy (free, on Render)
+
+`render.yaml` describes one web service that serves the shop and the API together.
+In Render choose New, then Blueprint, pick this repo, and apply. The site opens at the service URL, and the API is at `/api`.
+Free services sleep after 15 minutes without traffic and data in memory resets on every restart.

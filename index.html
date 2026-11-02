@@ -423,7 +423,7 @@ dialog.drawer{margin:0 0 0 auto;border-radius:var(--r-lg) 0 0 var(--r-lg);max-wi
         '<p>Thanks, '+esc(order.name)+'. Your order number is <b>'+order.no+'</b>.</p>'+
         '<p style="color:var(--muted)">We will bake on '+esc(order.when)+' and deliver between '+esc(order.slot)+' to '+esc(order.addr)+'.</p>'+
         '<p><b>Total '+money(order.total)+'</b>, paid '+esc(order.pay)+'.</p>'+
-        '<p class="note">This is a demo shop. No payment was taken and no order was sent to a bakery.</p>'+
+        '<p class="note">'+(order.server?'This is a demo shop. Your order is saved on the demo server and no payment was taken.':'This is a demo shop. No payment was taken and no order was sent to a bakery.')+'</p>'+
         '<button class="btn" type="button" data-close>Keep browsing</button></div></div>';
       dlg.innerHTML=h;return;
     }
@@ -463,10 +463,32 @@ dialog.drawer{margin:0 0 0 auto;border-radius:var(--r-lg) 0 0 var(--r-lg);max-wi
     chk('addr',v('addr').length>9,'Enter the full street address, including building and area.');
     chk('date',v('date')>=tomorrow(),'Choose tomorrow or a later date.');
     if(bad)return;
-    var total=subtotal()+delivery();
-    order={no:'LT-'+String(Math.floor(Math.random()*90000)+10000),name:v('name').split(' ')[0],addr:v('addr'),slot:v('slot'),pay:f.elements.pay.value,
-      when:new Date(v('date')+'T12:00:00').toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'}),total:total};
-    cart=[];save();updateCount();view='done';renderCart();
+    var btn=f.querySelector('button[type=submit]');btn.disabled=true;
+    var localTotal=subtotal()+delivery();
+    var payload={items:cart.map(function(i){return{productId:i.id,size:i.size,message:i.msg,quantity:i.qty}}),
+      customer:{name:v('name'),phone:v('phone'),email:v('email'),address:v('addr')},
+      deliveryDate:v('date'),timeSlot:v('slot'),payment:f.elements.pay.value.indexOf('card')>-1?'card':'cash',note:v('note')};
+    function finish(no,total,server){
+      order={no:no,name:v('name').split(' ')[0],addr:v('addr'),slot:v('slot'),pay:f.elements.pay.value,
+        when:new Date(v('date')+'T12:00:00').toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'}),total:total,server:server};
+      cart=[];save();updateCount();view='done';renderCart();
+    }
+    /* Uses the API when this page is served by the backend; falls back to a local demo order on static hosting. */
+    fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+      .then(function(r){return r.json().then(function(b){return{status:r.status,body:b}})})
+      .then(function(r){
+        if(r.status===201)return finish(r.body.number,r.body.total,true);
+        var map={'customer.name':'name','customer.phone':'phone','customer.email':'email','customer.address':'addr','deliveryDate':'date'};
+        var fields=(r.body.error&&r.body.error.fields)||{},shown=false;
+        Object.keys(fields).forEach(function(k){
+          var id=map[k];if(!id)return;
+          $('#e-'+id).textContent=fields[k];f.elements[id].classList.add('bad');
+          if(!shown){f.elements[id].focus();shown=true}
+        });
+        if(!shown)toast((r.body.error&&r.body.error.message)||'The order could not be placed. Try again.');
+        btn.disabled=false;
+      })
+      .catch(function(){finish('LT-'+String(Math.floor(Math.random()*90000)+10000),localTotal,false)});
   });
 
   /* ---------- Events ---------- */
@@ -493,5 +515,14 @@ dialog.drawer{margin:0 0 0 auto;border-radius:var(--r-lg) 0 0 var(--r-lg);max-wi
   /* ---------- Init ---------- */
   $('#heroCake').innerHTML=cakeSVG({id:'hero',name:'Pistachio Rose cake',layers:['#BFD8A4','#F6D8E0','#BFD8A4'],f:'#FFFFFF',top:'strawberries',drip:'#F2A9B8'},true);
   renderChips();renderGrid();updateCount();
+
+  /* Load the catalogue from the API when available; the built-in list above is the offline fallback. */
+  fetch('/api/products').then(function(r){return r.ok?r.json():Promise.reject()}).then(function(d){
+    if(!d||!Array.isArray(d.products)||!d.products.length)return;
+    P=d.products.map(function(a){return{id:a.id,name:a.name,desc:a.description,notes:a.ingredients,cat:a.categories,price:a.basePrice,
+      c:a.art.color,layers:a.art.layers,f:a.art.frosting,top:a.art.topping,drip:a.art.drip||undefined,candle:a.art.candle,flat:a.art.flat}});
+    BYID={};P.forEach(function(p){BYID[p.id]=p});
+    renderGrid();
+  }).catch(function(){});
 })();
 </script>

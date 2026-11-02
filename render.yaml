@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: little-tier-cakes
+    runtime: node
+    plan: free
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: ENABLE_TEST_ROUTES
+        value: "1"

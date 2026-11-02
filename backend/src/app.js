@@ -1,4 +1,5 @@
 "use strict";
+const path = require("path");
 const express = require("express");
 const S = require("./store");
 
@@ -86,7 +87,7 @@ function createApp() {
   app.use(auth);
 
   /* ---- Site ---- */
-  app.get("/", (req, res) => res.json({ name: "Little Tier Cakes API", health: "/api/health", products: "/api/products", docs: "openapi.yaml" }));
+  app.get("/", (req, res) => res.sendFile(path.join(__dirname, "..", "..", "index.html")));
 
   /* ---- Health ---- */
   app.get("/api/health", (req, res) => res.json({ status: "ok", time: new Date().toISOString() }));
